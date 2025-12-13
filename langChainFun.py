@@ -6,6 +6,7 @@ load_dotenv()
 # ============= KEYS =============
 groq_api_key = os.getenv("GROQ_API_KEY")
 pinecone_api_key = os.getenv("PINECONE_API_KEY")
+huggingface_api_key = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # ============= LLM =============
 from langchain_groq import ChatGroq
@@ -39,16 +40,12 @@ splitter = RecursiveCharacterTextSplitter(
 chunks = splitter.split_documents(docs)
 
 # ============= EMBEDDINGS =============
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 
 def download_embedding():
-    model_name = "sentence-transformers/all-mpnet-base-v2"
-    model_kwargs = {"device": "cpu"}
-    encode_kwargs = {"normalize_embeddings": False}
-    return HuggingFaceEmbeddings(
-        model_name=model_name,
-        model_kwargs=model_kwargs,
-        encode_kwargs=encode_kwargs,
+    return HuggingFaceEndpointEmbeddings(
+        huggingfacehub_api_token=huggingface_api_key,
+        model="sentence-transformers/all-mpnet-base-v2"
     )
 
 embeddings = download_embedding()
